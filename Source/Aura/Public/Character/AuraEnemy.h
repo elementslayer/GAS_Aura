@@ -21,7 +21,11 @@ public:
 	//Enemy Interface Functions
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
-	//End Enemey Interface
+	//End Enemy Interface
+
+	//Combat InterFace
+	virtual int32 GetPlayerLevel() override;
+	//End Combat Interface
 
 protected:
 	virtual void BeginPlay() override;
