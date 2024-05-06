@@ -39,6 +39,10 @@ struct FEffectProperties
 	TObjectPtr<ACharacter> TargetCharacter = nullptr;
 };
 
+//typedef would be specific to FAttributeFuncPtr, TStaticFunPtr is now generic
+//typedef TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FAttributeFuncPtr;
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
@@ -51,6 +55,17 @@ public:
 
 	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	//TMap<FGameplayTag, FAttributeSignature> TagsToAttributes;
+
+	//Created a function pointer [named function pointer] that returns gameplay attribute and takes no argument
+	//TBaseStaticDelegateInstance<FGameplayAttribute(), FDefaultDelegateUserPolicy>::FFuncPtr FunctionPointer;
+
+	//Use that above to be our function in our tmap instead of the FAttribute Signature Delegate
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
+
+	//Reducewd type to a function pointer
+	//TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
 
 	/*
 	 *Secondary Attirbutes

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/Widget/OverlayWidgetController.h"
+#include "UI/Widget/AttributeMenuWidgetController.h"
 
 UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -14,9 +15,19 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParam(WCParams);
 		OverlayWidgetController->BindCallbacksToDependencies();
-		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
+}
+
+UAttributeMenuWidgetController* AAuraHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParam(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return AttributeMenuWidgetController;
 }
 
 void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
@@ -24,15 +35,15 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	checkf(OverlayWidgetClass, TEXT("Overlay WIdget Class unitiazlied. Fill Out BP_Aura_HUD"))
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class Uninitalized, Fill Out BP_Aura_HUD"))
 
-	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
-	OverlayWidget = Cast<UAuraUserWidget>(Widget);
+	UUserWidget* TmpOverlayWidget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
+	OverlayWidget = Cast<UAuraUserWidget>(TmpOverlayWidget);
 
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 
-	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+	UOverlayWidgetController* TmpOverlayWidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
-	OverlayWidget->SetWidgetController(WidgetController);
-	WidgetController->BroadcastInitialValues();
+	OverlayWidget->SetWidgetController(TmpOverlayWidgetController);
+	TmpOverlayWidgetController->BroadcastInitialValues();
 
-	Widget->AddToViewport();
+	TmpOverlayWidget->AddToViewport();
 }
